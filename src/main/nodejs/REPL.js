@@ -1,0 +1,42 @@
+let readline = require('readline');
+
+let SemanticCheckASTNodeVistor = require('./ast/visit/SemanticCheckASTNodeVisitor');
+let EvaluatorASTNodeVisitor = require('./ast/visit/EvaluatorASTNodeVisitor');
+let PrintASTNodeVisitor = require('./ast/visit/PrintASTNodeVisitor');
+let Evaluator = require('./Evaluator');
+
+class REPL {
+    constructor(inputStream, outputStream) {
+        this.rl = readline.createInterface({
+            input: inputStream,
+            output: outputStream
+        });
+
+        let sc = new SemanticCheckASTNodeVistor();
+        let e = new EvaluatorASTNodeVisitor();
+        let p = new PrintASTNodeVisitor();
+
+        this.rl.setPrompt('> ');
+        this.rl.on('line', input => {
+            let cst = Evaluator.concreteSyntaxTree(input);
+            let ast = Evaluator.abstractSyntaxTree(cst);
+            let errs = sc.visit(ast);
+            outputStream.cork();
+            if (errs.length > 0) {
+                errs.forEach(err => outputStream.write(err));
+            } else {
+                let evaluation = e.visit(ast);
+                outputStream.write(p.visit(evaluation));
+                outputStream.write('\n');
+            }
+            process.nextTick(() => outputStream.uncork());
+            this.rl.prompt();
+        });
+    }
+
+    start() {
+        this.rl.prompt();
+    }
+}
+
+module.exports = REPL;
