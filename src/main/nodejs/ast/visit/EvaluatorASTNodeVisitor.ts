@@ -1,31 +1,37 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const ASTNodeVisitor_1 = require("./ASTNodeVisitor");
-const ConstASTNode_1 = require("../node/ConstASTNode");
+import {ASTNodeVisitor} from "./ASTNodeVisitor";
+import {ASTNode} from "../node/ASTNode";
+import {ConstASTNode} from "../node/ConstASTNode";
+import {ApplicationASTNode} from "../node/ApplicationASTNode";
+import {CompositionASTNode} from "../node/CompositionASTNode";
+import {SuccessorASTNode} from "../node/SuccessorASTNode";
+import {ProjectionASTNode} from "../node/ProjectionASTNode";
+
+
 /**
  * Represents an error during evaluation of a parse tree as a
  * result of incorrect language implementation.
  */
 class EvaluationError extends Error {
 }
-class EvaluatorASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
-    constructor() {
-        super(...arguments);
-        this.stack = [];
-        this.apply = false;
-        this.compose = false;
-    }
-    visitConst(node) {
+
+class EvaluatorASTNodeVisitor extends ASTNodeVisitor<ASTNode> {
+    private stack: ASTNode[][] = [];
+    private apply: boolean = false;
+    private compose: boolean = false;
+
+    public visitConst(node: ConstASTNode): ASTNode {
         return node;
     }
-    visitApplication(node) {
+
+    public visitApplication(node: ApplicationASTNode): ASTNode {
         this.stack.push(node.args.map(a => this.visit(a)));
         this.apply = true;
         let r = this.visit(node.func);
         this.apply = false;
         return r;
     }
-    visitComposition(node) {
+
+    public visitComposition(node: CompositionASTNode): ASTNode {
         if (this.apply) {
             let args = this.stack.pop();
             if (args) {
@@ -36,40 +42,40 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
                 }));
             }
             return this.visit(node.func);
-        }
-        else {
+        } else {
             return node;
         }
     }
-    visitSuccessor(node) {
+
+    public visitSuccessor(node: SuccessorASTNode): ASTNode {
         if (this.apply) {
             let args = this.stack.pop();
             if (args) {
                 // It's OK to cast args[0] to ConstASTNode here because our
                 // semantic checks are performed already by our language's type system.
-                return new ConstASTNode_1.ConstASTNode(args[0].number + 1);
-            }
-            else {
+                return new ConstASTNode((<ConstASTNode> args[0]).number + 1);
+            } else {
                 throw new EvaluationError("Missing arguments for sucessor");
             }
-        }
-        else {
+        } else {
             return node;
         }
     }
-    visitProjection(node) {
+
+    public visitProjection(node: ProjectionASTNode): ASTNode {
         if (this.apply || this.compose) {
             let args = this.stack.pop();
             if (args) {
                 return args[node.index];
-            }
-            else {
+            } else {
                 throw new EvaluationError("Missing arguments for application or composition");
-            }
-        }
-        else {
+            } 
+                
+        } else {
             return node;
         }
     }
+
 }
-exports.EvaluatorASTNodeVisitor = EvaluatorASTNodeVisitor;
+
+export {EvaluatorASTNodeVisitor};

@@ -1,41 +1,24 @@
-let ASTNodeVisitor = require('../node/ASTNodeVisitor');
-let ConstASTNode = require('../node/ConstASTNode');
-
-class EvaluatorASTNodeVisitor extends ASTNodeVisitor {
-    constructor() {
-        super();
-    }
-
-    visitConst(node) {
-        return this.astNodeToString(node.number, '*');
-    }
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const ASTNodeVisitor_1 = require("./ASTNodeVisitor");
+class PrintASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
     visitApplication(node) {
-        let func = node.func.accept(this);
-        let args = node.args.map(arg => arg.accept(this));
-        return `${func}(${args.join(',')})`;
+        return `${this.visit(node.func)}(${node.args.map(a => this.visit(a)).join(',')})`;
     }
-
+    visitComposition(node) {
+        return `${this.visit(node.func)}.(${node.args.map(a => this.visit(a)).join(',')})`;
+    }
     visitSuccessor(node) {
-        return this.astNodeToString('S', '*', '*');
+        return 'S';
     }
-
+    visitConst(node) {
+        return `${node.number}`;
+    }
     visitProjection(node) {
-        let fromType = Array(node.arity).fill('*').join(',');
-        if (node.arity > 1) {
-            fromType = `(` + fromType + `)`;
-        }
-        return this.astNodeToString(`P^${node.arity}_${node.index}`, '*', fromType);
+        return `P^${node.arity}_${node.index}`;
     }
-
-
-    astNodeToString(val, toType, fromType = null) {
-        if (fromType) {
-            return `${val}: ${fromType} -> ${toType}`;
-        } else {
-            return `${val}: ${toType}`;
-        }
+    makeString(expr, type) {
+        return `${expr}: ${type}`;
     }
 }
-
-module.exports = EvaluatorASTNodeVisitor;
+exports.PrintASTNodeVisitor = PrintASTNodeVisitor;

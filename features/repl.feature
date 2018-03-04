@@ -19,10 +19,10 @@ Feature: REPL should evaluate simple expressions
     Then I get <output>
 
     Examples:
-      | input   | output    |
-      | S       | S: * -> * |
-      | S(0)    | 1: *      |
-      | S(S(0)) | 2: *      |
+      | input   | output      |
+      | S       | S: (* -> *) |
+      | S(0)    | 1: *        |
+      | S(S(0)) | 2: *        |
 
   Scenario Outline: REPL should evaluate projection expressions
     Given a REPL
@@ -30,10 +30,10 @@ Feature: REPL should evaluate simple expressions
     Then I get <output>
 
     Examples:
-      | input      | output            |
-      | P^1_0      | P^1_0: * -> *     |
-      | P^2_0      | P^2_0: (*,*) -> * |
-      | P^2_0(0,0) | 0: *              |
+      | input      | output                 |
+      | P^1_0      | P^1_0: (a -> a)        |
+      | P^2_0      | P^2_0: (a -> (b -> a)) |
+      | P^2_0(0,0) | 0: *                   |
 
   Scenario Outline: REPL should evaluate composition expressions
     Given a REPL
@@ -41,8 +41,8 @@ Feature: REPL should evaluate simple expressions
     Then I get <output>
 
     Examples:
-      | input                   | output                  |
-      | S.(S)                   | S.(S): * -> *           |
-      | P^2_0.(S,S)             | S: * -> *               |
-      | P^2_0.(P^3_1,P^3_2)     | P^3_1: (*,*,*) -> *     |
-      | S.(P^2_0.(P^3_1,P^3_2)) | S.(P^3_1): (*,*,*) -> * |
+      | input                   | output                                          |
+      | S.(S)                   | S.(S): (* -> *)                                 |
+      | P^2_0.(S,S)             | P^2_0.(S,S): (* -> *)                           |
+      | P^2_0.(P^3_1,P^3_2)     | P^2_0.(P^3_1,P^3_2): (a -> (b -> (c -> b)))     |
+      | S.(P^2_0.(P^3_1,P^3_2)) | S.(P^2_0.(P^3_1,P^3_2)): (a -> (* -> (b -> *))) |

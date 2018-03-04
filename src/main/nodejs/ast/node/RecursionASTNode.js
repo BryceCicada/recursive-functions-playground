@@ -1,13 +1,13 @@
-let ASTNode = require('./ASTNode');
-class RecursionASTNode extends ASTNode {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class RecursionASTNode {
     constructor(base, recursion) {
-        super();
         this.base = base;
         this.recursion = recursion;
-        this.arity = 0;
+        this.type = base.type;
     }
-    get [Symbol.toStringTag]() {
-        return 'RecursionASTNode';
+    accept(visitor) {
+        return visitor.visitRecursion(this);
     }
 }
-module.exports = RecursionASTNode;
+exports.RecursionASTNode = RecursionASTNode;

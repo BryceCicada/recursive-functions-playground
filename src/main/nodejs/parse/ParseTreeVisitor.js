@@ -1,20 +1,15 @@
 let RecFunVisitor = require('../../../../target/src/main/antlr/RecFunVisitor');
 
-let EmptyASTNode = require('../ast/node/EmptyASTNode');
-let ConstASTNode = require('../ast/node/ConstASTNode');
-let SuccessorASTNode = require('../ast/node/SuccessorASTNode');
-let ProjectionASTNode = require('../ast/node/ProjectionASTNode');
-let ApplicationASTNode = require('../ast/node/ApplicationASTNode');
-let CompositionASTNode = require('../ast/node/CompositionASTNode');
-let RecursionASTNode = require('../ast/node/RecursionASTNode');
+let {ConstASTNode} = require('../ast/node/ConstASTNode');
+let {SuccessorASTNode} = require('../ast/node/SuccessorASTNode');
+let {ProjectionASTNode} = require('../ast/node/ProjectionASTNode');
+let {ApplicationASTNode} = require('../ast/node/ApplicationASTNode');
+let {CompositionASTNode} = require('../ast/node/CompositionASTNode');
+let {RecursionASTNode} = require('../ast/node/RecursionASTNode');
 
 class ParseTreeVisitor extends RecFunVisitor.RecFunVisitor {
     visitParse(ctx) {
-        if (ctx.children.length <= 1) {
-            return new EmptyASTNode();
-        } else {
-            return this.visit(ctx.children[0]);
-        }
+        return this.visit(ctx.children[0]);
     }
 
     visitConst(ctx) {

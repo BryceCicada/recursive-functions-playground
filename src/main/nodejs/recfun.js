@@ -1,3 +1,3 @@
-let Evaluator = require('./Evaluator');
+let REPL = require("./REPL");
 
-Evaluator.repl(process.stdin, process.stdout);
+new REPL(process.stdin, process.stdout).start();

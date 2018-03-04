@@ -1,25 +1,30 @@
 let chai = require('chai');
 let expect = chai.expect;
 
-let SemanticCheckASTNodeVisitor = require('../../../../main/nodejs/ast/visit/SemanticCheckASTNodeVisitor');
-let ConstASTNode = require('../../../../main/nodejs/ast/node/ConstASTNode');
-let ProjectionASTNode = require('../../../../main/nodejs/ast/node/ProjectionASTNode');
-let SuccessorASTNode = require('../../../../main/nodejs/ast/node/SuccessorASTNode');
-let CompositionASTNode = require('../../../../main/nodejs/ast/node/CompositionASTNode');
-let ApplicationASTNode = require('../../../../main/nodejs/ast/node/ApplicationASTNode');
+let {TypeCheckASTNodeVisitor} = require('../../../../main/nodejs/ast/visit/TypeCheckASTNodeVisitor');
+let {ConstASTNode} = require('../../../../main/nodejs/ast/node/ConstASTNode');
+let {ProjectionASTNode} = require('../../../../main/nodejs/ast/node/ProjectionASTNode');
+let {SuccessorASTNode} = require('../../../../main/nodejs/ast/node/SuccessorASTNode');
+let {CompositionASTNode} = require('../../../../main/nodejs/ast/node/CompositionASTNode');
+let {ApplicationASTNode} = require('../../../../main/nodejs/ast/node/ApplicationASTNode');
 
-describe('SemanticCheckASTNodeVisitor', function () {
+describe('TypeCheckASTNodeVisitor', function () {
     it('should be defined', function () {
-        new SemanticCheckASTNodeVisitor();
+        new TypeCheckASTNodeVisitor();
     });
 
     describe('visit()', function () {
-        let visitor = new SemanticCheckASTNodeVisitor();
+        let visitor = new TypeCheckASTNodeVisitor();
 
         describe('CompositionASTNode', function () {
             it('should return empty errors on S.(S)', function () {
                 let node = new CompositionASTNode(new SuccessorASTNode(), [new SuccessorASTNode()]);
                 expect(visitor.visit(node)).to.be.empty;
+            });
+
+            it('should return error on S.(P^2_0,S)', function () {
+                let node = new CompositionASTNode(new SuccessorASTNode(), [new ProjectionASTNode(2,0), new SuccessorASTNode()]);
+                expect(visitor.visit(node)).to.not.be.empty;
             });
 
             it('should return error on S.(S,S)', function () {
@@ -31,6 +36,31 @@ describe('SemanticCheckASTNodeVisitor', function () {
                 let node = new CompositionASTNode(new ProjectionASTNode(2,0), [new ProjectionASTNode(1,0), new ProjectionASTNode(2,0)]);
                 expect(visitor.visit(node)).to.not.be.empty;
             });
+
+            it('should return empty errors on P^2_0.(S,S)', function () {
+                let node = new CompositionASTNode(new ProjectionASTNode(2,0), [new SuccessorASTNode(), new SuccessorASTNode()]);
+                expect(visitor.visit(node)).to.be.empty;
+            });
+
+            it('should return empty errors on P^2_0.(P^3_1,P^3_2)', function () {
+                let node = new CompositionASTNode(new ProjectionASTNode(2,0), [new ProjectionASTNode(3,1), new ProjectionASTNode(3,2)]);
+                expect(visitor.visit(node)).to.be.empty;
+            });
+
+            it('should return empty errors on S.(P^2_0.(P^3_1,P^3_2))', function () {
+                let node = new CompositionASTNode(
+                    new SuccessorASTNode(), [
+                        new CompositionASTNode(
+                            new ProjectionASTNode(2,0), [
+                                new ProjectionASTNode(3,1),
+                                new ProjectionASTNode(3,2)
+                            ]
+                        )
+                    ]
+                );
+                expect(visitor.visit(node)).to.be.empty;
+            });
+
 
         });
 

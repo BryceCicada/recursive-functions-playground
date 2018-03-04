@@ -1,18 +1,13 @@
-let ASTNode = require('./ASTNode');
-class ConstASTNode extends ASTNode {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Type_1 = require("../../type/Type");
+class ConstASTNode {
     constructor(number) {
-        super();
         this.number = number;
-        this.arity = 0;
+        this.type = Type_1.constType;
     }
-
     accept(visitor) {
         return visitor.visitConst(this);
     }
-
-    get [Symbol.toStringTag]() {
-        return 'ConstASTNode';
-    }
-
 }
-module.exports = ConstASTNode;
+exports.ConstASTNode = ConstASTNode;

@@ -1,11 +1,2 @@
-class ASTNode {
-    constructor() {
-    }
-
-    accept(visitor) {
-        throw Error("Not implemented");
-    }
-
-}
-
-module.exports = ASTNode;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
