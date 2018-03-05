@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretest": "./node_modules/typescript/bin/tsc -p .",
+    "prestart": "./node_modules/typescript/bin/tsc -p .",
+    "test": "./node_modules/cucumber/bin/cucumber.js && node_modules/mocha/bin/mocha src/test/**/*Test.js ",
     "start": "antlr4 -Dlanguage=JavaScript -o target -visitor src/main/antlr/*.g4 && node src/main/nodejs/recfun.js"
   },
   "author": "",

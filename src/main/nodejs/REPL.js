@@ -9,28 +9,30 @@ class REPL {
     constructor(inputStream, outputStream) {
         this.rl = readline.createInterface({
             input: inputStream,
-            output: outputStream
+            output: outputStream,
+            prompt: "> "
         });
 
         let sc = new TypeCheckASTNodeVisitor();
         let e = new EvaluatorASTNodeVisitor();
         let p = new PrintASTNodeVisitor();
 
-        this.rl.setPrompt('> ');
         this.rl.on('line', input => {
-            let cst = Evaluator.concreteSyntaxTree(input);
-            let ast = Evaluator.abstractSyntaxTree(cst);
-            let errs = sc.visit(ast);
-            outputStream.cork();
-            if (errs.length > 0) {
-                errs.forEach(err => outputStream.write(err.message));
-            } else {
-                let evaluation = e.visit(ast);
-                outputStream.write(`${p.visit(evaluation)}: ${evaluation.type.toString()}`);
-                outputStream.write('\n');
+            if (input) {
+                let cst = Evaluator.concreteSyntaxTree(input);
+                let ast = Evaluator.abstractSyntaxTree(cst);
+                let errs = sc.visit(ast);
+                outputStream.cork();
+                if (errs.length > 0) {
+                    errs.forEach(err => outputStream.write(err.message));
+                } else {
+                    let evaluation = e.visit(ast);
+                    outputStream.write(`${p.visit(evaluation)}: ${evaluation.type.toString()}`);
+                    outputStream.write(`\n`);
+                }
+                process.nextTick(() => outputStream.uncork());
             }
-            process.nextTick(() => outputStream.uncork());
-            this.rl.prompt();
+            this.rl.prompt(true);
         });
     }
 
