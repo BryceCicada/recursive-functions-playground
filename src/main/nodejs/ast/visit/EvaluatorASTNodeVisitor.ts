@@ -5,6 +5,7 @@ import {ApplicationASTNode} from "../node/ApplicationASTNode";
 import {CompositionASTNode} from "../node/CompositionASTNode";
 import {SuccessorASTNode} from "../node/SuccessorASTNode";
 import {ProjectionASTNode} from "../node/ProjectionASTNode";
+import {RecursionASTNode} from "../node/RecursionASTNode";
 
 
 /**
@@ -55,7 +56,7 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor<ASTNode> {
                 // semantic checks are performed already by our language's type system.
                 return new ConstASTNode((<ConstASTNode> args[0]).number + 1);
             } else {
-                throw new EvaluationError("Missing arguments for sucessor");
+                throw new EvaluationError("Missing arguments for successor");
             }
         } else {
             return node;
@@ -63,14 +64,46 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor<ASTNode> {
     }
 
     public visitProjection(node: ProjectionASTNode): ASTNode {
-        if (this.apply || this.compose) {
+        if (this.apply) {
             let args = this.stack.pop();
             if (args) {
                 return args[node.index];
             } else {
-                throw new EvaluationError("Missing arguments for application or composition");
+                throw new EvaluationError("Missing arguments for projection");
             } 
                 
+        } else {
+            return node;
+        }
+    }
+
+    public visitRecursion(node: RecursionASTNode): ASTNode {
+        if (this.apply) {
+            let args = this.stack.pop();
+            if (args) {
+                let recursionCounter = (<ConstASTNode>args[0]).number;
+                if (recursionCounter === 0) {
+                    this.stack.push(args.slice(1));
+                    return this.visit(node.base);
+                } else {
+                    let recursionArgs : ASTNode[] = [];
+                    let reducedCounterNode = new ConstASTNode(recursionCounter-1);
+                    recursionArgs.push(reducedCounterNode);
+                    recursionArgs.push(...args.slice(1));
+                    this.stack.push(recursionArgs);
+                    let recursionResult = this.visit(node);
+
+                    let resultArgs : ASTNode[] = [];
+                    resultArgs.push(reducedCounterNode);
+                    resultArgs.push(recursionResult);
+                    resultArgs.push(...args.slice(1));
+                    this.stack.push(resultArgs);
+                    return this.visit(node.recursion);
+                }
+            } else {
+                throw new EvaluationError("Missing arguments for recursion");
+            }
+
         } else {
             return node;
         }

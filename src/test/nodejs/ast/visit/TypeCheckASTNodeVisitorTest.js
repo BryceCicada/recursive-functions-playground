@@ -7,6 +7,7 @@ let {ProjectionASTNode} = require('../../../../main/nodejs/ast/node/ProjectionAS
 let {SuccessorASTNode} = require('../../../../main/nodejs/ast/node/SuccessorASTNode');
 let {CompositionASTNode} = require('../../../../main/nodejs/ast/node/CompositionASTNode');
 let {ApplicationASTNode} = require('../../../../main/nodejs/ast/node/ApplicationASTNode');
+let {RecursionASTNode} = require('../../../../main/nodejs/ast/node/RecursionASTNode');
 
 describe('TypeCheckASTNodeVisitor', function () {
     it('should be defined', function () {
@@ -102,9 +103,25 @@ describe('TypeCheckASTNodeVisitor', function () {
                 let node = new SuccessorASTNode();
                 expect(visitor.visit(node)).to.be.empty;
             });
-
         });
 
+        describe('RecursionASTNode', function () {
+            it('should return empty errors', function () {
+                let node = new RecursionASTNode(
+                    new ProjectionASTNode(1,0),
+                    new ProjectionASTNode(3,2)
+                );
+                expect(visitor.visit(node)).to.be.empty;
+            });
+
+            it('should return error on P^1_0:P^2_1', function () {
+                let node = new RecursionASTNode(
+                    new ProjectionASTNode(1,0),
+                    new ProjectionASTNode(2,1)
+                );
+                expect(visitor.visit(node)).to.not.be.empty;
+            });
+        });
     });
 });
 

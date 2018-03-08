@@ -66,5 +66,23 @@ class TypeCheckASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
         }
         return nodeErrs;
     }
+    visitRecursion(node) {
+        let nodeErrs = [];
+        let baseErrs = this.visit(node.base);
+        let recursionErrs = this.visit(node.recursion);
+        nodeErrs.concat(baseErrs, recursionErrs);
+        try {
+            node.type;
+        }
+        catch (e) {
+            if (e instanceof Type_1.StaticTypeError) {
+                nodeErrs.push(new TypeCheckFailure(e.message));
+            }
+            else {
+                throw e;
+            }
+        }
+        return nodeErrs;
+    }
 }
 exports.TypeCheckASTNodeVisitor = TypeCheckASTNodeVisitor;

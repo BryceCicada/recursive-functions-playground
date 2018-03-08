@@ -17,6 +17,9 @@ class PrintASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
     visitProjection(node) {
         return `P^${node.arity}_${node.index}`;
     }
+    visitRecursion(node) {
+        return `(${this.visit(node.base)}:${this.visit(node.recursion)})`;
+    }
     makeString(expr, type) {
         return `${expr}: ${type}`;
     }

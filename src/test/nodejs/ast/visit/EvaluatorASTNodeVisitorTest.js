@@ -63,21 +63,6 @@ describe('EvaluatorASTNodeVisitor', function () {
                 expect(evaluation.number).to.equal(1);
             });
         });
-
-        // describe('CompositionASTNode', function () {
-        //
-        //     it('should evaluate S.(S) to S.(S)', function () {
-        //         let evaluation = visitor.visit(new CompositionASTNode(new SuccessorASTNode(), [new SuccessorASTNode()]));
-        //         expect(evaluation).to.be.an.instanceof(CompositionASTNode);
-        //         expect(evaluation.func).to.be.an.instanceof(SuccessorASTNode);
-        //         expect(evaluation.args[0]).to.be.an.instanceof(SuccessorASTNode);
-        //     });
-        //
-        //     it('should evaluate P^2_0.(S,S) to S', function () {
-        //         let evaluation = visitor.visit(new CompositionASTNode(new ProjectionASTNode(2,0), [new SuccessorASTNode(), new SuccessorASTNode()]));
-        //         expect(evaluation).to.be.an.instanceof(SuccessorASTNode);
-        //     });
-        // });
     });
 });
 

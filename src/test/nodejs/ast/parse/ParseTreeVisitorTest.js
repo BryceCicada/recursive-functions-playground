@@ -100,9 +100,9 @@ describe('ParseTreeVisitor', function () {
 
         it('should convert P^1_0:S.(P^3_2) to recursion node', function () {
             let ast = parseTreeVistor.visit(Evaluator.concreteSyntaxTree('P^1_0:S.(P^3_1)'));
-            // expect(ast).to.be.an.instanceof(RecursionASTNode);
-            // expect(ast.base).to.be.an.instanceof(ProjectionASTNode);
-            // expect(ast.recursion).to.be.an.instanceof(CompositionASTNode);
+            expect(ast).to.be.an.instanceof(RecursionASTNode);
+            expect(ast.base).to.be.an.instanceof(ProjectionASTNode);
+            expect(ast.recursion).to.be.an.instanceof(CompositionASTNode);
         });
 
     });

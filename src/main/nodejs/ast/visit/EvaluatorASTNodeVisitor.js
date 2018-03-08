@@ -50,7 +50,7 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
                 return new ConstASTNode_1.ConstASTNode(args[0].number + 1);
             }
             else {
-                throw new EvaluationError("Missing arguments for sucessor");
+                throw new EvaluationError("Missing arguments for successor");
             }
         }
         else {
@@ -58,13 +58,45 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
         }
     }
     visitProjection(node) {
-        if (this.apply || this.compose) {
+        if (this.apply) {
             let args = this.stack.pop();
             if (args) {
                 return args[node.index];
             }
             else {
-                throw new EvaluationError("Missing arguments for application or composition");
+                throw new EvaluationError("Missing arguments for projection");
+            }
+        }
+        else {
+            return node;
+        }
+    }
+    visitRecursion(node) {
+        if (this.apply) {
+            let args = this.stack.pop();
+            if (args) {
+                let recursionCounter = args[0].number;
+                if (recursionCounter === 0) {
+                    this.stack.push(args.slice(1));
+                    return this.visit(node.base);
+                }
+                else {
+                    let recursionArgs = [];
+                    let reducedCounterNode = new ConstASTNode_1.ConstASTNode(recursionCounter - 1);
+                    recursionArgs.push(reducedCounterNode);
+                    recursionArgs.push(...args.slice(1));
+                    this.stack.push(recursionArgs);
+                    let recursionResult = this.visit(node);
+                    let resultArgs = [];
+                    resultArgs.push(reducedCounterNode);
+                    resultArgs.push(recursionResult);
+                    resultArgs.push(...args.slice(1));
+                    this.stack.push(resultArgs);
+                    return this.visit(node.recursion);
+                }
+            }
+            else {
+                throw new EvaluationError("Missing arguments for recursion");
             }
         }
         else {
