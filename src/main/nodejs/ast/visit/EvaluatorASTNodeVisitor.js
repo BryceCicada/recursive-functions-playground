@@ -13,7 +13,6 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
         super(...arguments);
         this.stack = [];
         this.apply = false;
-        this.compose = false;
     }
     visitConst(node) {
         return node;
@@ -47,7 +46,7 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
             if (args) {
                 // It's OK to cast args[0] to ConstASTNode here because our
                 // semantic checks are performed already by our language's type system.
-                return new ConstASTNode_1.ConstASTNode(args[0].number + 1);
+                return ConstASTNode_1.ConstASTNode.from(args[0].number + 1);
             }
             else {
                 throw new EvaluationError("Missing arguments for successor");
@@ -82,7 +81,7 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
                 }
                 else {
                     let recursionArgs = [];
-                    let reducedCounterNode = new ConstASTNode_1.ConstASTNode(recursionCounter - 1);
+                    let reducedCounterNode = ConstASTNode_1.ConstASTNode.from(recursionCounter - 1);
                     recursionArgs.push(reducedCounterNode);
                     recursionArgs.push(...args.slice(1));
                     this.stack.push(recursionArgs);
@@ -101,6 +100,24 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
         }
         else {
             return node;
+        }
+    }
+    visitBlock(node) {
+        let r = super.visitBlock(node);
+        if (this.apply) {
+            return this.visit(r);
+        }
+        else {
+            return r;
+        }
+    }
+    visitVariable(node) {
+        let r = super.visitVariable(node);
+        if (this.apply) {
+            return this.visit(r);
+        }
+        else {
+            return r;
         }
     }
 }

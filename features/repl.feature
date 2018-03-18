@@ -58,3 +58,15 @@ Feature: REPL should evaluate simple expressions
       | P^1_0:S.(P^3_2)      | (P^1_0:S.(P^3_2)): (* -> (* -> *)) |
       | P^1_0:S.(P^3_1)(0,1) | 1: *                               |
       | P^1_0:S.(P^3_1)(2,3) | 5: *                               |
+
+  Scenario Outline: REPL should evaluate block expressions
+    Given a REPL
+    When I input <input>
+    Then I get <output>
+
+    Examples:
+      | input                                                                | output |
+      | let a = 0 in 1                                                       | 1: *   |
+      | let a = 0 in a                                                       | 0: *   |
+      | let id=P^1_0 in id(2)                                                | 2: *   |
+      | let id=P^1_0, add=id:S.(P^3_1) in add(2,3)                           | 5: *   |

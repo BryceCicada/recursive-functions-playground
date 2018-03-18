@@ -1,8 +1,7 @@
 let readline = require('readline');
 
-let {TypeCheckASTNodeVisitor} = require('./ast/visit/TypeCheckASTNodeVisitor');
+let {TypingASTNodeVisitor} = require('./ast/visit/TypingASTNodeVisitor');
 let {EvaluatorASTNodeVisitor} = require('./ast/visit/EvaluatorASTNodeVisitor');
-let {PrintASTNodeVisitor} = require('./ast/visit/PrintASTNodeVisitor');
 let Evaluator = require('./Evaluator');
 
 class REPL {
@@ -13,9 +12,8 @@ class REPL {
             prompt: "> "
         });
 
-        let sc = new TypeCheckASTNodeVisitor();
+        let sc = new TypingASTNodeVisitor();
         let e = new EvaluatorASTNodeVisitor();
-        let p = new PrintASTNodeVisitor();
 
         this.rl.on('line', input => {
             if (input) {
@@ -27,7 +25,7 @@ class REPL {
                     errs.forEach(err => outputStream.write(err.message));
                 } else {
                     let evaluation = e.visit(ast);
-                    outputStream.write(`${p.visit(evaluation)}: ${evaluation.type.toString()}`);
+                    outputStream.write(`${evaluation.toString()}: ${evaluation.type.toString()}`);
                     outputStream.write(`\n`);
                 }
                 process.nextTick(() => outputStream.uncork());

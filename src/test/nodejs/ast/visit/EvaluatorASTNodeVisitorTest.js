@@ -7,6 +7,9 @@ let {ProjectionASTNode} = require('../../../../main/nodejs/ast/node/ProjectionAS
 let {SuccessorASTNode} = require('../../../../main/nodejs/ast/node/SuccessorASTNode');
 let {ApplicationASTNode} = require('../../../../main/nodejs/ast/node/ApplicationASTNode');
 let {CompositionASTNode} = require('../../../../main/nodejs/ast/node/CompositionASTNode');
+let {BlockASTNode} = require('../../../../main/nodejs/ast/node/BlockASTNode');
+let {VariableASTNode} = require('../../../../main/nodejs/ast/node/VariableASTNode');
+let {AssignmentASTNode} = require('../../../../main/nodejs/ast/node/AssignmentASTNode');
 
 describe('EvaluatorASTNodeVisitor', function () {
     it('should be defined', function () {
@@ -63,6 +66,34 @@ describe('EvaluatorASTNodeVisitor', function () {
                 expect(evaluation.number).to.equal(1);
             });
         });
+
+        describe('BlockASTNode', function () {
+
+            it('should evaluate "let a = 1 in a" to 1', function () {
+                let a = new VariableASTNode('a');
+                let evaluation = visitor.visit(
+                    new BlockASTNode(
+                        a,
+                        [new AssignmentASTNode(a, new ConstASTNode(1))]
+                    )
+                );
+                expect(evaluation).to.be.an.instanceof(ConstASTNode);
+                expect(evaluation.number).to.equal(1);
+            });
+
+            it('should evaluate "let s = S in s(0)" to 1', function () {
+                let s = new VariableASTNode('s');
+                let evaluation = visitor.visit(
+                    new BlockASTNode(
+                        new ApplicationASTNode(s, [new ConstASTNode(0)]),
+                        [new AssignmentASTNode(s, new SuccessorASTNode())]
+                    )
+                );
+                expect(evaluation).to.be.an.instanceof(ConstASTNode);
+                expect(evaluation.number).to.equal(1);
+            });
+        });
+
     });
 });
 

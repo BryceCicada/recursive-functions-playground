@@ -6,6 +6,10 @@ import {CompositionASTNode} from "../node/CompositionASTNode";
 import {SuccessorASTNode} from "../node/SuccessorASTNode";
 import {ProjectionASTNode} from "../node/ProjectionASTNode";
 import {RecursionASTNode} from "../node/RecursionASTNode";
+import {BlockASTNode} from "../node/BlockASTNode";
+import {AssignmentASTNode} from "../node/AssignmentASTNode";
+import {VariableASTNode} from "../node/VariableASTNode";
+import {StaticTypeError, Type} from "../../type/Type";
 
 
 /**
@@ -18,7 +22,6 @@ class EvaluationError extends Error {
 class EvaluatorASTNodeVisitor extends ASTNodeVisitor<ASTNode> {
     private stack: ASTNode[][] = [];
     private apply: boolean = false;
-    private compose: boolean = false;
 
     public visitConst(node: ConstASTNode): ASTNode {
         return node;
@@ -54,7 +57,7 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor<ASTNode> {
             if (args) {
                 // It's OK to cast args[0] to ConstASTNode here because our
                 // semantic checks are performed already by our language's type system.
-                return new ConstASTNode((<ConstASTNode> args[0]).number + 1);
+                return ConstASTNode.from((<ConstASTNode> args[0]).number + 1);
             } else {
                 throw new EvaluationError("Missing arguments for successor");
             }
@@ -87,7 +90,7 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor<ASTNode> {
                     return this.visit(node.base);
                 } else {
                     let recursionArgs : ASTNode[] = [];
-                    let reducedCounterNode = new ConstASTNode(recursionCounter-1);
+                    let reducedCounterNode = ConstASTNode.from(recursionCounter-1);
                     recursionArgs.push(reducedCounterNode);
                     recursionArgs.push(...args.slice(1));
                     this.stack.push(recursionArgs);
@@ -109,6 +112,23 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor<ASTNode> {
         }
     }
 
+    visitBlock(node: BlockASTNode): ASTNode {
+        let r = super.visitBlock(node);
+        if (this.apply) {
+            return this.visit(r)
+        } else {
+            return r;
+        }
+    }
+
+    visitVariable(node: VariableASTNode) : ASTNode {
+        let r = super.visitVariable(node);
+        if (this.apply) {
+            return this.visit(r)
+        } else {
+            return r;
+        }
+    }
 }
 
 export {EvaluatorASTNodeVisitor};
