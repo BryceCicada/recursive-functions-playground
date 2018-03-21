@@ -11,25 +11,20 @@ let expect = chai.expect;
 
 defineSupportCode(function({Given, When, Then}) {
     Given(/^a REPL$/, function () {
-        this.replInput = new PassThrough();
-        let output = new PassThrough();
-        this.replOutput = new Rx.ReplaySubject();
-        streamToStringRx(output).subscribe(this.replOutput);
-        this.repl = new REPL(this.replInput, output);
+        this.repl = new REPL();
     });
 
-    When(/^I input (.+)$/, function (input) {
-        this.replInput.write(input + '\n');
+    When(/^I input (.+)$/, function (input, done) {
+        this.repl.eval(input, null, null, (throws, returns) => {
+            this.throws = throws;
+            this.returns = returns;
+            done()
+        });
     });
 
-    Then(/^I get (.+)$/, function (input, done) {
-        this.replOutput.first().subscribe(
-            x => {
-                expect(x).to.eql(input);
-                done();
-            },
-            done,
-            done);
+    Then(/^I get (.+)$/, function (input) {
+        expect(this.throws).to.eql(null);
+        expect(this.returns).to.eql(input)
     });
 });
 

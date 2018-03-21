@@ -1,12 +1,14 @@
 grammar RecFun;
 
+WS: [ \t]+ -> skip;
+NEWLINE: '\r'? '\n' -> skip;
+
 NUMBER: ('0' .. '9')+ ;
 SUCCESSOR: 'S';
 PROJECTION: 'P';
+LET: 'let';
+IN: 'in';
 VAR:  [A-Za-z][A-Za-z0-9_]*;
-
-WS: [ \t]+ -> skip;
-SKP: [\r]+ -> skip;
 
 parse
  : func* EOF
@@ -24,5 +26,5 @@ func
  | func '.' '(' func (',' func)* ')'             # Composition
  | func ':' func                                 # Recursion
  | func '(' func (',' func)* ')'                 # Application
- | 'let' assignment (',' assignment)* 'in' func  # Block
+ | LET assignment (',' assignment)* IN func      # Block
  ;

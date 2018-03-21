@@ -9,7 +9,7 @@ class Evaluator {
         let lexer = new RecFunLexer.RecFunLexer(chars);
         let tokens = new antlr4.CommonTokenStream(lexer);
         let parser = new RecFunParser.RecFunParser(tokens);
-        parser.buildParseTrees = true;
+        // parser.setTrace(true);
         return parser.parse();
     }
 
