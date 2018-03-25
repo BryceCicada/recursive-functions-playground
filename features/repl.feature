@@ -89,3 +89,18 @@ Feature: REPL should evaluate simple expressions
       | let a =\n0 in a  | 0: *   |
       | let a = 0\nin a  | 0: *   |
       | let a = 0 in\na  | 0: *   |
+
+  Scenario Outline: REPL should handle bracket expressions
+    Given a REPL
+    When I input <input>
+    Then I get <output>
+
+    Examples:
+      | input               | output                             |
+      | (0)                 | 0: *                               |
+      | ((0))               | 0: *                               |
+      | (S)                 | S: (* -> *)                        |
+      | (S(0))              | 1: *                               |
+      | (S(S(0)))           | 2: *                               |
+      | (S.(S))             | S.(S): (* -> *)                    |
+      | (P^1_0):(S).(P^3_2) | (P^1_0:S.(P^3_2)): (* -> (* -> *)) |

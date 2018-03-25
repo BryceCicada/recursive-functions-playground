@@ -19,8 +19,7 @@ assignment
  ;
 
 func
- : '(' func ')'                                  # Bracket
- | NUMBER                                        # Const
+ : NUMBER                                        # Const
  | SUCCESSOR                                     # Successor
  | PROJECTION '^' NUMBER '_' NUMBER              # Projection
  | VAR                                           # Variable
@@ -28,4 +27,5 @@ func
  | func ':' func                                 # Recursion
  | func '(' func (',' func)* ')'                 # Application
  | LET assignment (',' assignment)* IN func      # Block
+ | '(' func ')'                                  # Bracket
  ;

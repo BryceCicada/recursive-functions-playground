@@ -23,7 +23,10 @@ class REPL {
                 } else {
                     errors.push(msg);
                 }
-            }
+            },
+            reportAttemptingFullContext: () => {},
+            reportAmbiguity: () => {}
+
         });
         if (keepGoing) {
             callback(new repl.Recoverable());
