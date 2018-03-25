@@ -7,9 +7,7 @@ import {SuccessorASTNode} from "../node/SuccessorASTNode";
 import {ProjectionASTNode} from "../node/ProjectionASTNode";
 import {RecursionASTNode} from "../node/RecursionASTNode";
 import {BlockASTNode} from "../node/BlockASTNode";
-import {AssignmentASTNode} from "../node/AssignmentASTNode";
 import {VariableASTNode} from "../node/VariableASTNode";
-import {StaticTypeError, Type} from "../../type/Type";
 
 
 /**

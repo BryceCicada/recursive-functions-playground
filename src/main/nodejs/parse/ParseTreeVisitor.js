@@ -15,6 +15,10 @@ class ParseTreeVisitor extends RecFunVisitor.RecFunVisitor {
         return this.visit(ctx.children[0]);
     }
 
+    visitBracket(ctx) {
+        return this.visit(ctx.children[1]);
+    }
+
     visitConst(ctx) {
         let number = parseInt(ctx.children[0].symbol.text, 10);
         return new ConstASTNode(number);

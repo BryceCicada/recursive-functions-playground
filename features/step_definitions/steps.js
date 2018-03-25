@@ -14,7 +14,7 @@ defineSupportCode(function({Given, When, Then}) {
         this.repl = new REPL();
     });
 
-    When(/^I input (.+)$/, function (input, done) {
+    When(/^I input ((?:.|\n)+)$/, function (input, done) {
         this.repl.eval(input, null, null, (throws, returns) => {
             this.throws = throws;
             this.returns = returns;

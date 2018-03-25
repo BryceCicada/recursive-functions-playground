@@ -4,12 +4,14 @@ let RecFunParser = require('../../../target/src/main/antlr/RecFunParser');
 let ParseTreeVisitor = require('./parse/ParseTreeVisitor');
 
 class Evaluator {
-    static concreteSyntaxTree(input) {
+    static concreteSyntaxTree(input, errorListener) {
         let chars = new antlr4.InputStream(input);
         let lexer = new RecFunLexer.RecFunLexer(chars);
         let tokens = new antlr4.CommonTokenStream(lexer);
         let parser = new RecFunParser.RecFunParser(tokens);
         // parser.setTrace(true);
+        parser.removeErrorListeners();
+        parser.addErrorListener(errorListener);
         return parser.parse();
     }
 

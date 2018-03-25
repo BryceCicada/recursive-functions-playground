@@ -19,7 +19,8 @@ assignment
  ;
 
 func
- : NUMBER                                        # Const
+ : '(' func ')'                                  # Bracket
+ | NUMBER                                        # Const
  | SUCCESSOR                                     # Successor
  | PROJECTION '^' NUMBER '_' NUMBER              # Projection
  | VAR                                           # Variable
