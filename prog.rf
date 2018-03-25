@@ -1,6 +1,7 @@
 let 
   id=P^1_0, 
   add=id:S.(P^3_1),
-  mul=0:P^2_1:add.(P^3_1,P^3_2)
+  f0=0:P^2_1,
+  mul=f0:add.(P^3_1,P^3_2)
 in
   mul(3,8)
