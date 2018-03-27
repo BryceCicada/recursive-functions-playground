@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const ASTNodeVisitor_1 = require("./ASTNodeVisitor");
 const ConstASTNode_1 = require("../node/ConstASTNode");
+const RecursionASTNode_1 = require("../node/RecursionASTNode");
 /**
  * Represents an error during evaluation of a parse tree as a
  * result of incorrect language implementation.
@@ -13,6 +14,7 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
         super(...arguments);
         this.stack = [];
         this.apply = false;
+        this.applyStack = [];
     }
     visitConst(node) {
         return node;
@@ -99,26 +101,21 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
             }
         }
         else {
-            return node;
+            let r = new RecursionASTNode_1.RecursionASTNode(this.visit(node.base), this.visit(node.recursion));
+            r.type = node.type;
+            return r;
         }
     }
     visitBlock(node) {
+        this.applyStack.push(this.apply);
+        this.apply = false;
         let r = super.visitBlock(node);
-        if (this.apply) {
-            return this.visit(r);
-        }
-        else {
-            return r;
-        }
+        this.apply = this.applyStack.pop() || false;
+        return this.visit(r);
     }
     visitVariable(node) {
         let r = super.visitVariable(node);
-        if (this.apply) {
-            return this.visit(r);
-        }
-        else {
-            return r;
-        }
+        return this.visit(r);
     }
 }
 exports.EvaluatorASTNodeVisitor = EvaluatorASTNodeVisitor;

@@ -130,6 +130,17 @@ describe('Type', function () {
                 expect(unifier.applyTo(a)).to.eql(f);
             });
 
+            it('unify [a->a,b->*] returns {a: *, b: *}', function () {
+                let a = genericType();
+                let b = genericType();
+                let f1 = functionType(a, a);
+                let f2 = functionType(b, constType);
+                let unifier = Unifier.from(f1, f2);
+                expect(unifier.size()).to.eql(2);
+                expect(unifier.applyTo(a)).to.eql(constType);
+                expect(unifier.applyTo(b)).to.eql(constType);
+            });
+
             it('unify [a->b,(*->*)->c] returns {a:*->*, b->c}', function () {
                 let a = genericType();
                 let b = genericType();
@@ -143,14 +154,14 @@ describe('Type', function () {
                 expect(unifier.applyTo(b) === c || unifier.get(c) === b).to.eql(true);
             });
 
-            it('unify [a->b,a->a] returns {b: a}', function () {
+            it('unify [a->b,a->a] returns {a: b}', function () {
                 let a = genericType();
                 let b = genericType();
                 let f1 = functionType(a, a);
                 let f2 = functionType(a, b);
                 let unifier = Unifier.from(f1, f2);
                 expect(unifier.size()).to.eql(1);
-                expect(unifier.applyTo(b)).to.eql(a);
+                expect(unifier.applyTo(a)).to.eql(b);
             });
 
         });
@@ -164,7 +175,7 @@ describe('Type', function () {
                 expect(Unifier.fromAll(constType).size()).to.eql(0);
             });
 
-            it('unify [a->b,a->a,c] returns {b: a, c:a->a}', function () {
+            it('unify [a->b,a->a,c] returns {a: b, c:b->b}', function () {
                 let a = genericType();
                 let b = genericType();
                 let c = genericType();
@@ -172,9 +183,70 @@ describe('Type', function () {
                 let f2 = functionType(a, b);
                 let unifier = Unifier.fromAll(f1, f2, c);
                 expect(unifier.size()).to.eql(2);
-                expect(unifier.applyTo(b)).to.eql(a);
-                expect(unifier.applyTo(c)).to.eql(f1);
+                expect(unifier.applyTo(a)).to.eql(b);
+                expect(unifier.applyTo(c)).to.eql(functionType(b, b));
             });
         });
+
+        describe('merge', function () {
+            it('merge unifier for [*,*] and [*,*] returns {}', function () {
+                let u1 = Unifier.from(constType, constType);
+                let u2 = Unifier.from(constType, constType);
+                let u3 = Unifier.merge(u1,u2);
+                expect(u3.size()).to.eql(0);
+            });
+
+            it('merge unifier for [a,*] and [*,*] returns {a: *}', function () {
+                let a = genericType();
+                let u1 = Unifier.from(a, constType);
+                let u2 = Unifier.from(constType, constType);
+                let u3 = Unifier.merge(u1,u2);
+                expect(u3.size()).to.eql(1);
+                expect(u3.applyTo(a)).to.eql(constType);
+            });
+
+            it('merge unifier for [a,*] and [a,*] returns {a: *}', function () {
+                let a = genericType();
+                let u1 = Unifier.from(a, constType);
+                let u2 = Unifier.from(a, constType);
+                let u3 = Unifier.merge(u1,u2);
+                expect(u3.size()).to.eql(1);
+                expect(u3.applyTo(a)).to.eql(constType);
+            });
+
+            it('merge unifier for [a,*] and [b,*] returns {a: *, b: *}', function () {
+                let a = genericType();
+                let b = genericType();
+                let u1 = Unifier.from(a, constType);
+                let u2 = Unifier.from(b, constType);
+                let u3 = Unifier.merge(u1,u2);
+                expect(u3.size()).to.eql(2);
+                expect(u3.applyTo(a)).to.eql(constType);
+                expect(u3.applyTo(b)).to.eql(constType);
+            });
+
+            it('merge unifier for [a,*] and [b,*->*] returns {a: *, b: *->*}', function () {
+                let a = genericType();
+                let b = genericType();
+                let f = functionType(constType, constType);
+                let u1 = Unifier.from(a, constType);
+                let u2 = Unifier.from(b, f);
+                let u3 = Unifier.merge(u1,u2);
+                expect(u3.size()).to.eql(2);
+                expect(u3.applyTo(a)).to.eql(constType);
+                expect(u3.applyTo(b)).to.eql(f);
+            });
+
+            it('merge unifier for [a,*] and [a,*->*] returns {a: *, b: *->*}', function () {
+                let a = genericType();
+                let f = functionType(constType, constType);
+                let u1 = Unifier.from(a, constType);
+                let u2 = Unifier.from(a, f);
+                let u3 = Unifier.merge(u1,u2);
+                expect(u3).to.eql(null);
+            });
+
+        });
+
     });
 });

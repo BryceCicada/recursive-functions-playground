@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const FactoryMap = require("factory-map");
+const lodash_1 = require("lodash");
 class StaticTypeError extends Error {
 }
 exports.StaticTypeError = StaticTypeError;
@@ -78,6 +79,25 @@ class Unifier {
             return null;
         return new Unifier(u);
     }
+    static merge(u1, u2) {
+        if (!u1)
+            return null;
+        if (!u2)
+            return null;
+        let commonKeys = lodash_1.intersection([...u1.unifier.keys()], [...u2.unifier.keys()]);
+        let commonKeysEqual = commonKeys.every(key => {
+            let val1 = u1.unifier.get(key);
+            let val2 = u2.unifier.get(key);
+            return !!val1 && !!val2 && val1.equals(val2);
+        });
+        if (!commonKeysEqual)
+            return null;
+        let u = new Unifier();
+        [...u1.unifier].concat([...u2.unifier])
+            .filter(([key, value]) => !!value)
+            .forEach(([key, value]) => u.unifier.set(key, value));
+        return u;
+    }
     applyTo(x) {
         if (Array.isArray(x)) {
             return x.map((t) => this.applyTo(t));
@@ -125,7 +145,13 @@ class FunctionType {
                 return GenericType.VARIABLE_NAME_POOL[i++];
             });
         }
-        return `(${this.from.toString(map)} -> ${this.to.toString(map)})`;
+        let typeStrings = [...this.types()].map(x => x.toString(map));
+        let from = typeStrings.slice(0, -1).join(',');
+        let to = typeStrings[typeStrings.length - 1];
+        if (from.length > 1) {
+            from = `(${from})`;
+        }
+        return `(${from} -> ${to})`;
     }
     equals(other) {
         return other instanceof FunctionType &&
@@ -133,7 +159,11 @@ class FunctionType {
             this.to.equals(other.to);
     }
 }
+let ctr = 0;
 class LeafType {
+    constructor() {
+        this.id = ctr++;
+    }
     contains(type) {
         return this.equals(type);
     }

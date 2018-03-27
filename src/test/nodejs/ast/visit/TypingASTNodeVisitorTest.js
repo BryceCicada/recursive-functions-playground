@@ -44,17 +44,17 @@ describe('TypingASTNodeVisitor', function () {
                 expect(visitor.visit(node).toString()).to.eql('(* -> *)');
             });
 
-            it('should return (a -> (b -> (c -> b))) on P^2_0.(P^3_1,P^3_2)', function () {
+            it('should return ((a,b,c) -> b) on P^2_0.(P^3_1,P^3_2)', function () {
                 let node = new CompositionASTNode(
                     new ProjectionASTNode(2,0), [
                         new ProjectionASTNode(3,1),
                         new ProjectionASTNode(3,2)
                     ]
                 );
-                expect(visitor.visit(node).toString()).to.eql('(a -> (b -> (c -> b)))');
+                expect(visitor.visit(node).toString()).to.eql('((a,b,c) -> b)');
             });
 
-            it('should return (a -> (* -> (b -> *))) on S.(P^2_0.(P^3_1,P^3_2))', function () {
+            it('should return ((a,*,b) -> *) on S.(P^2_0.(P^3_1,P^3_2))', function () {
                 let node = new CompositionASTNode(
                     new SuccessorASTNode(), [
                         new CompositionASTNode(
@@ -65,7 +65,7 @@ describe('TypingASTNodeVisitor', function () {
                         )
                     ]
                 );
-                expect(visitor.visit(node).toString()).to.eql('(a -> (* -> (b -> *)))');
+                expect(visitor.visit(node).toString()).to.eql('((a,*,b) -> *)');
             });
 
 
@@ -93,9 +93,9 @@ describe('TypingASTNodeVisitor', function () {
         });
 
         describe('ProjectionASTNode', function () {
-            it('should return (a -> (b -> (c -> b))) on P^3_1', function () {
+            it('should return ((a,b,c) -> b) on P^3_1', function () {
                 let node = new ProjectionASTNode(3, 1);
-                expect(visitor.visit(node).toString()).to.eql('(a -> (b -> (c -> b)))');
+                expect(visitor.visit(node).toString()).to.eql('((a,b,c) -> b)');
             });
 
             it('should throw StaticTypeError on P^1_3', function () {
@@ -117,7 +117,7 @@ describe('TypingASTNodeVisitor', function () {
                     new ProjectionASTNode(1,0),
                     new ProjectionASTNode(3,2)
                 );
-                expect(visitor.visit(node).toString()).to.eql('(* -> (a -> a))');
+                expect(visitor.visit(node).toString()).to.eql('((*,a) -> a)');
             });
 
             it('should throw StaticTypeError on P^1_0:P^2_1', function () {

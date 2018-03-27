@@ -20,6 +20,7 @@ class EvaluationError extends Error {
 class EvaluatorASTNodeVisitor extends ASTNodeVisitor<ASTNode> {
     private stack: ASTNode[][] = [];
     private apply: boolean = false;
+    private applyStack : boolean[] = [];
 
     public visitConst(node: ConstASTNode): ASTNode {
         return node;
@@ -106,26 +107,23 @@ class EvaluatorASTNodeVisitor extends ASTNodeVisitor<ASTNode> {
             }
 
         } else {
-            return node;
+            let r = new RecursionASTNode(this.visit(node.base), this.visit(node.recursion));
+            r.type = node.type;
+            return r;
         }
     }
 
     visitBlock(node: BlockASTNode): ASTNode {
+        this.applyStack.push(this.apply);
+        this.apply = false;
         let r = super.visitBlock(node);
-        if (this.apply) {
-            return this.visit(r)
-        } else {
-            return r;
-        }
+        this.apply = this.applyStack.pop() || false;
+        return this.visit(r)
     }
 
     visitVariable(node: VariableASTNode) : ASTNode {
         let r = super.visitVariable(node);
-        if (this.apply) {
-            return this.visit(r)
-        } else {
-            return r;
-        }
+        return this.visit(r)
     }
 }
 

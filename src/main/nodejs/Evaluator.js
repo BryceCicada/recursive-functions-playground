@@ -1,10 +1,14 @@
+
 let antlr4 = require('antlr4');
 let RecFunLexer = require('../../../target/src/main/antlr/RecFunLexer');
 let RecFunParser = require('../../../target/src/main/antlr/RecFunParser');
 let ParseTreeVisitor = require('./parse/ParseTreeVisitor');
+let ConsoleErrorListener = require('antlr4/error/ErrorListener').ConsoleErrorListener;
+
+let consoleErrorListener = new ConsoleErrorListener();
 
 class Evaluator {
-    static concreteSyntaxTree(input, errorListener) {
+    static concreteSyntaxTree(input, errorListener = consoleErrorListener) {
         let chars = new antlr4.InputStream(input);
         let lexer = new RecFunLexer.RecFunLexer(chars);
         let tokens = new antlr4.CommonTokenStream(lexer);

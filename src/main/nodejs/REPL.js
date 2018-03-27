@@ -51,7 +51,7 @@ class REPL {
     }
 
     start() {
-        repl.start({prompt: '> ', eval: this.eval});
+        repl.start({prompt: '> ', eval: this.eval, writer: x => x});
     }
 }
 

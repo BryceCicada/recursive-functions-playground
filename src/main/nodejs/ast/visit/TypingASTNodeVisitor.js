@@ -86,7 +86,7 @@ class TypingASTNodeVisitor extends ASTNodeVisitor_1.ASTNodeVisitor {
         let recursionType = this.visit(node.recursion);
         let baseTypes = [...baseType.types()];
         let recursionTypes = [...recursionType.types()];
-        let unifier = Type_1.Unifier.from(baseTypes, recursionTypes.slice(2));
+        let unifier = Type_1.Unifier.from(recursionTypes.slice(2), baseTypes);
         if (!unifier) {
             throw new Type_1.StaticTypeError(`Invalid recursion. No valid unifier.`);
         }
