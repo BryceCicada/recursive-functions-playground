@@ -1,0 +1,16 @@
+let ifzero=P^2_0:P^4_3 in ifzero
+
+# ifzero(x,a,b) will return a if x is 0, b otherwise.
+#
+# For example:
+#
+#   ifzero(0,2,4) = P^2_0(2,4)
+#                 = 2
+#
+#   ifzero(1,2,4) = P^4_3(0, ifzero(0,2,4), 2, 4)
+#                 = P^4_3(0, 2, 2, 4)
+#                 = 4
+#
+#   ifzero(2,2,4) = P^4_3(1, ifzero(1,2,4), 2, 4)
+#                 = P^4_3(1, 4, 2, 4)
+#                 = 4

@@ -89,30 +89,5 @@ For example, the addition function _add_ can defined as:
 
 ## Examples
 
-### Addition
-```
-> let id=P^1_0, add=id:S.(P^3_1) in add(2,3)
-5: *
-``` 
-
-### Multiplication
-```
-> let 
-...   id=P^1_0, 
-...   add=id:S.(P^3_1),
-...   f0=0:P^2_1,
-...   mul=f0:add.(P^3_1,P^3_2)
-... in
-...   mul(3,8)
-24: *
-```
-
-### Conditional
-```
-> let ifzero=P^2_0:P^4_3 in ifzero(0,5,10)
-5: *
-> let ifzero=P^2_0:P^4_3 in ifzero(1,5,10)
-10: *
-```
-
+See examples folder.
 
