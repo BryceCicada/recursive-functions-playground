@@ -10,6 +10,8 @@ LET: 'let';
 IN: 'in';
 VAR:  [A-Za-z][A-Za-z0-9_]*;
 
+COMMENT: '#' ~( '\r' | '\n' )* -> skip;
+
 parse
  : func* EOF
  ;

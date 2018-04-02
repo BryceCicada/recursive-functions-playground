@@ -114,3 +114,13 @@ Feature: REPL should evaluate simple expressions
       | (S.(S))             | S.(S): (* -> *)                 |
       | (P^1_0):(S).(P^3_2) | (P^1_0:S.(P^3_2)): ((*,*) -> *) |
 
+  @comment
+  Scenario Outline: REPL should handle comments
+    Given a REPL
+    When I input <input>
+    Then I get <output>
+
+    Examples:
+      | input    | output |
+      | # 0 \n 1 | 1: *   |
+      | 1 # 0    | 1: *   |

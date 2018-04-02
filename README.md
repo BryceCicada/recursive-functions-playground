@@ -68,7 +68,18 @@ P^1_0: (a -> a)
 
 Multiple variables can be defined in a single 'let' function by separating the assignments with a comma.  Later variables can refer to earlier variables.
 
-Now for the fun bit.  Function recursion is represented by `:` symbol.  On each side of `:` is a function.  The left side is an n-ary base case function.  The right side is an (n+2)-ary recursion function.  For example, the addition function _add_ can defined as:
+Now for the fun bit.  Function recursion is represented by `:` symbol.  On each side of `:` is a function.  
+
+  - The left side is an n-ary base case function, f.  
+  - The right side is an (n+2)-ary recursion function, g.
+  - The resulting function is an (n+1)-ary function, h, that takes arguments _ctr, x1, x2, ..., xn_, where ctr is a recursion counter.  A semi-formal definition of h is as follows:
+    - h(0, x1, x2, ..., xn) = f(x_1, x_2, ..., x_n)
+    - h(y, x1, x2, ..., xn) = g(y-1, h(y-1, x1, x2, ..., xn), x1, x2, ..., xn)
+  - That is,
+    - The first argument of g is the recursion counter, decrementing on each call.
+    - The second argument of g is the result of recursively calling h with recursion counter decremented.
+
+For example, the addition function _add_ can defined as:
 ```
  > let id=P^1_0, add=id:S.(P^3_1) in add
 (P^1_0:S.(P^3_1)): ((*,*) -> *)
