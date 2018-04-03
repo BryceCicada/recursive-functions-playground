@@ -1,5 +1,3 @@
-let ifzero=P^2_0:P^4_3 in ifzero
-
 # ifzero(x,a,b) will return a if x is 0, b otherwise.
 #
 # For example:
@@ -14,3 +12,5 @@ let ifzero=P^2_0:P^4_3 in ifzero
 #   ifzero(2,2,4) = P^4_3(1, ifzero(1,2,4), 2, 4)
 #                 = P^4_3(1, 4, 2, 4)
 #                 = 4
+
+let ifzero=P^2_0:P^4_3 in ifzero

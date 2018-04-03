@@ -1,5 +1,3 @@
-let id=P^1_0, add=id:S.(P^3_1) in add
-
 # add(n,m) will apply the successor function n times to the constant m.
 #
 # For example:
@@ -18,6 +16,9 @@ let id=P^1_0, add=id:S.(P^3_1) in add
 #            = S(3)
 #            = 4
 
+let id=P^1_0, add=id:S.(P^3_1) in add
+
+# For example:
 (let id=P^1_0, add=id:S.(P^3_1) in add)(2,3)
 # or
 let id=P^1_0, add=id:S.(P^3_1) in add(2,3)

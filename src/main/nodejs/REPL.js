@@ -4,13 +4,12 @@ let Evaluator = require('./Evaluator');
 let Token = require('antlr4').Token;
 let repl = require('repl');
 let StaticTypeError = require('./type/Type').StaticTypeError;
-let EvaluationError = require('./ast/visit/EvaluatorASTNodeVisitor')
 
 class REPL {
 
     eval(cmd, context, filename, callback) {
         if (!cmd.trim()) {
-            return callback(new repl.Recoverable());
+            return callback();
         }
         let typeChecker = new TypingASTNodeVisitor();
         let evaluator = new EvaluatorASTNodeVisitor();
@@ -29,10 +28,13 @@ class REPL {
 
         });
         if (keepGoing) {
-            callback(new repl.Recoverable());
+            return callback(new repl.Recoverable());
         } else {
             if (!errors.length) {
                 let ast = Evaluator.abstractSyntaxTree(cst);
+                if (!ast) {
+                    return callback();
+                }
                 try {
                     typeChecker.visit(ast);
                     let evaluation = evaluator.visit(ast);

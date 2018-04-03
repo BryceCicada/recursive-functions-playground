@@ -9,7 +9,7 @@ import {BlockASTNode} from "../node/BlockASTNode";
 import {AssignmentASTNode} from "../node/AssignmentASTNode";
 import {VariableASTNode} from "../node/VariableASTNode";
 import {ASTNodeVisitorContext} from "./ASTNodeVisitorContext";
-import {StaticTypeError, Type} from "../../type/Type";
+import {StaticTypeError} from "../../type/Type";
 
 interface IASTNodeVisitor<T> {
     visit(node: ASTNode): T

@@ -9,9 +9,13 @@ let {CompositionASTNode} = require('../ast/node/CompositionASTNode');
 let {RecursionASTNode} = require('../ast/node/RecursionASTNode');
 let {BlockASTNode} = require('../ast/node/BlockASTNode');
 let {AssignmentASTNode} = require('../ast/node/AssignmentASTNode');
+let Token = require('antlr4').Token;
 
 class ParseTreeVisitor extends RecFunVisitor.RecFunVisitor {
     visitParse(ctx) {
+        if (ctx.children[0].symbol && ctx.children[0].symbol.type === Token.EOF) {
+            return null;
+        }
         return this.visit(ctx.children[0]);
     }
 
