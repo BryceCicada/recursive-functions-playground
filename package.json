@@ -14,20 +14,20 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "antlr4": "^4.7.0",
+    "antlr4": "^4.7.1",
     "factory-map": "^1.0.0",
     "lodash": "^4.17.5"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.104",
+    "@types/lodash": "^4.14.106",
     "chai": "^4.1.2",
-    "cucumber": "^3.0.4",
+    "cucumber": "^3.2.1",
     "mocha": "^3.5.3",
-    "rxjs": "^5.4.3",
-    "rxjs-stream": "^1.0.4",
+    "rxjs": "^5.5.8",
+    "rxjs-stream": "^1.1.0",
     "sinon": "^3.3.0",
-    "streamtest": "^1.2.2",
+    "streamtest": "^1.2.3",
     "tslint": "^5.9.1",
-    "typescript": "^2.7.2"
+    "typescript": "^2.8.1"
   }
 }
