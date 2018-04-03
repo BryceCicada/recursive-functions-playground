@@ -1,0 +1,30 @@
+# multiply(n,m) will recursively apply the addition of constant n a total of m times to the constant 0.
+#
+# The function 'multiply' is 2-ary, so the base case function must be 1-ary.
+# The base case function must return the constant 0.
+# The language does not define general n-ary constant functions, only the 0-ary constant functions.
+# We must recursively define a 1-ary constant zero function, which we do as f0 = 0:P^2_1.
+#
+# For example:
+#
+#   multiply(0,2) = f(0)
+#                 = 0:P^2_1(0)
+#                 = 0
+#
+#   multiply(1,2) = add.(P^3_1,P^3_2)(0, multiply(0,2), 2)
+#                 = add.(P^3_1,P^3_2)(0, 0, 2)
+#                 = add(0,2)
+#                 = 2
+#
+#   multiply(2,2) = add.(P^3_1,P^3_2)(1, multiply(1,2), 2)
+#                 = add.(P^3_1,P^3_2)(0, 2, 2)
+#                 = add(2,2)
+#                 = 4
+
+let
+  id=P^1_0,
+  add=id:S.(P^3_1),
+  f0=0:P^2_1,
+  multiply=f0:add.(P^3_1,P^3_2)
+in
+  multiply

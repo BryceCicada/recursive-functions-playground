@@ -1,0 +1,26 @@
+# subtract(n,m) will apply the predecessor function n times to the constant m.
+#
+# subtract(n,m) will return m-n if n < m, 0 otherwise.
+#
+# For example:
+#
+#   subtract(0,2) = id(2)
+#                 = P^1_0(2)
+#                 = 2
+#
+#   subtract(1,2) = predecessor.(P^3_1)(0, subtract(0,2), 2)
+#                 = predecessor.(P^3_1)(0, 2, 2)
+#                 = predecessor(2)
+#                 = 1
+#
+#   subtract(2,2) = predecessor.(P^3_1)(1, subtract(1,2), 2)
+#                 = predecessor.(P^3_1)(1, 1, 2)
+#                 = predecessor(1)
+#                 = 0
+
+let
+  id=P^1_0,
+  predecessor=0:P^2_0,
+  subtract=id:predecessor.(P^3_1)
+in
+  subtract

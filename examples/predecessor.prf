@@ -1,0 +1,15 @@
+# predecessor(x) will return x-1 if x > 0, 0 otherwise.
+#
+# For example:
+#
+#   predecessor(0) = 0
+#
+#   predecessor(1) = P^2_0(0, predecessor(0))
+#                  = P^2_0(0, 0)
+#                  = 0
+#
+#   predecessor(2) = P^2_0(1, predecessor(1))
+#                  = P^2_0(1, 0)
+#                  = 1
+
+let predecessor=0:P^2_0 in predecessor
