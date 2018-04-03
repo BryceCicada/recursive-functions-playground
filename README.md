@@ -8,9 +8,17 @@ https://en.wikipedia.org/wiki/Primitive_recursive_function
 
 Somewhere for me to play with writing my own language.
 
-Somewhere for me and others to play with recursive functions.
+Somewhere for me and others to play with primitive recursive functions.
 
 ## Introduction
+
+The language is made up of:
+  - A 0-ary constant function, `0`
+  - A 1-ary successor function, `S` that takes an argument, _n_, and returns _n+1_.
+  - n-ary projection functions, _P^n_i_ that take n arguments and return the ith (indexed from 0), eg `P^1_0`, `P^2_0`, `P^2_1`.
+  - A composition operator `.` to compose functions.
+  - A recursion operator `:` used to apply primitive recursion.
+  - A 'let \<definitions\> in \<expression\>' construct that allows the definition of named expressions that can be used (by substitution) in a final expression.
 
 The 0-ary constant function is represented by `0`.  The constant type is represented by `*`
 ```
@@ -19,7 +27,7 @@ The 0-ary constant function is represented by `0`.  The constant type is represe
 ```
 Normally, when reading examples of PRFs, the types are implicit.  We'll make them explicit when outputting expressions.  The type is not part of the expression to be input.
 
-Often, in formalisms of PRFs, the symbol '0' represents either a 1-ary or n-ary constant zero function.  Note that, here, `0` is 0-ary, ie a constant function with no arguments.  More on this later. 
+Often, in formalisms of PRFs, the symbol '0' represents either a 1-ary or n-ary constant zero function.  Note that, here, `0` is 0-ary, ie a constant function with no arguments..
 
 The 1-ary successor function is represented by `S`.  
 ```
@@ -33,7 +41,7 @@ The example above demonstrates:
   - We have a 0-ary constant function `1`. Contrary to common definitions of PRFs, which usually define only the zero constant function as a base expression, we'll allow other constant functions.  Hopefully, this isn't too much of a concession to purists.
   - We have a function type `(* -> *)` for functions that take a constant argument and return a constant.
 
-The n-ary projection function that returns the i-th argument is represented by _P^n_i_, eg `P^1_0`, `P^2_0`, `P^2_1`, etc
+The n-ary projection function that returns the i-th argument is represented by _P^n_i_.
 ```
 > P^2_0
 P^2_0: ((a,b) -> a)
@@ -53,7 +61,7 @@ S.(P^2_0): ((*,a) -> *)
 ```
 Notice the type inference in `S.(P^2_0): ((*,a) -> *)`
 
-As a convenience we can substitution variables in a 'let' function.  For example, to define the identity function _id_ in terms of the projection function _P^1_0_:
+As a convenience we can assign function expressions to names in a 'let' function.  For example, to define the identity function _id_ in terms of the projection function _P^1_0_:
 ```
 > let id=P^1_0 in id(1)
 1: *
@@ -66,26 +74,23 @@ P^1_0: (a -> a)
 1: *
 ```
 
-Multiple variables can be defined in a single 'let' function by separating the assignments with a comma.  Later variables can refer to earlier variables.
+Multiple defines can be made in a single 'let' function by separating the defines with a comma.  Later defines can refer to earlier defines within the same 'let' function.
 
 Now for the fun bit.  Function recursion is represented by `:` symbol.  On each side of `:` is a function.  
 
-  - The left side is an n-ary base case function, f.  
-  - The right side is an (n+2)-ary recursion function, g.
-  - The resulting function is an (n+1)-ary function, h, that takes arguments _ctr, x1, x2, ..., xn_, where ctr is a recursion counter.  A semi-formal definition of h is as follows:
-    - h(0, x1, x2, ..., xn) = f(x_1, x_2, ..., x_n)
-    - h(y, x1, x2, ..., xn) = g(y-1, h(y-1, x1, x2, ..., xn), x1, x2, ..., xn)
-  - That is,
-    - The first argument of g is the recursion counter, decrementing on each call.
-    - The second argument of g is the result of recursively calling h with recursion counter decremented.
+  - The left side is an n-ary base-case function, _f_.  
+  - The right side is an (n+2)-ary recursion function, _g_.
+  - The resulting function is an (n+1)-ary function, h, that takes arguments _ctr, x1, x2, ..., xn_, where ctr is a recursion counter.  Function _h_ is defined from _f_ and _g_ as follows:
+    - _h(0, x1, x2, ..., xn)_ = _f(x_1, x_2, ..., x_n)_
+    - _h(y, x1, x2, ..., xn)_ = _g(y-1, h(y-1, x1, x2, ..., xn), x1, x2, ..., xn)_
+  - That is, for the base-case function _f_:
+    - The arguments are those of _h_, except the first. 
+  - That is, for the recursion function _g_:
+    - The first argument is the recursion counter, decrementing on each recursive call.
+    - The second argument is the result of recursively calling h with recursion counter decremented.
+    - The remaining arguments are those of _h_, except the first.
 
-For example, the addition function _add_ can defined as:
-```
- > let id=P^1_0, add=id:S.(P^3_1) in add
-(P^1_0:S.(P^3_1)): ((*,*) -> *)
-> (let id=P^1_0, add=id:S.(P^3_1) in add)(2,3)
-5: *
-```
+And that's it.
 
 ## Examples
 
