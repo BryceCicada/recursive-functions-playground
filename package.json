@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "antlr": "antlr4 -Dlanguage=JavaScript -o target src/main/antlr/RecFun.g4 -visitor -no-listener",
+    "antlr": "antlr4 -Dlanguage=JavaScript -o target src/main/antlr/*.g4 -visitor -no-listener",
     "tsc": "./node_modules/typescript/bin/tsc -p .",
-    "pretest": "npm run antlr && npm run tsc",
-    "prestart": "npm run antlr && npm run tsc",
+    "compile": "npm run antlr && npm run tsc",
+    "pretest": "npm run compile",
+    "prestart": "npm run compile",
     "test": "./node_modules/cucumber/bin/cucumber.js && node_modules/mocha/bin/mocha src/test/**/*Test.js ",
-    "start": "antlr4 -Dlanguage=JavaScript -o target -visitor src/main/antlr/*.g4 && node src/main/nodejs/recfun.js"
+    "start": "node src/main/nodejs/recfun.js"
   },
   "author": "",
   "license": "ISC",

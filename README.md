@@ -10,7 +10,36 @@ Somewhere for me to play with writing my own language.
 
 Somewhere for me and others to play with primitive recursive functions.
 
-## Introduction
+# Usage
+
+## Setup
+
+```
+npm install
+```
+
+## Running
+
+```
+npm start
+```
+
+which is equivalent to
+
+```
+npm run compile
+node src/main/nodejs/recfun.js
+```
+
+## Tests
+
+```
+npm test
+```
+
+
+
+# Introduction
 
 The language is made up of:
   - A 0-ary constant function, `0`
